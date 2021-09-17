@@ -10,8 +10,13 @@ import java.net.Socket;
 
 public class ClientThread extends Thread{
 	private Socket socket;
-	public ClientThread(Socket socket) {
+	private String nickname;
+	
+	public ClientThread(Socket socket, String nickname) {
 		this.socket = socket;
+		this.nickname = nickname;
+		
+		
 	}
 	
 	@Override
@@ -20,7 +25,6 @@ public class ClientThread extends Thread{
 			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
 			PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "utf-8"));
 			
-			System.out.println("스레드 돌아감");
 			while(true) {
 				String line = br.readLine();
 				

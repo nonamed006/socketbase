@@ -8,15 +8,20 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Scanner;
 
 public class ChatServer {
 	//1. 서버소켓만들기
 	//2. bind 하기
 	//3. accept해서 대기상태 만들기
 	//4. 쓰레드 여러개 써야되는 이유 : 
-	//5. 
+	
+	static HashMap<String, Object> hash;
+	
 	public static void main(String[] args) {
 		ServerSocket serversocket = null;
+		
 		try {
 			serversocket = new ServerSocket();
 			
@@ -24,11 +29,12 @@ public class ChatServer {
 			
 			//대기하다가 소켓 생기면 스레드로 넘기고 다시 대기
 			
+			hash = new HashMap<String, Object>();
 			while(true) {
 				Socket socket = serversocket.accept();
 				
 				System.out.println("접속");
-				new CSThread(socket).start();
+				new CSThread(socket, hash).start();
 			}
 			
 			
@@ -39,7 +45,6 @@ public class ChatServer {
 			
 			//System.out.println("test");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

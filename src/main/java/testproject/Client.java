@@ -15,6 +15,7 @@ public class Client {
 	private static final int SERVER_PORT = 7000;
 	public static void main(String[] args) {
 		
+		String nickname = "";
 		Socket socket = new Socket();
 		Scanner scan = new Scanner(System.in);
 		
@@ -24,24 +25,38 @@ public class Client {
 			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
 			PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "utf-8"));
 			
-			new ClientThread(socket).start();
+			String str = br.readLine();
+			System.out.println(str);
+			
+			Scanner sc = new Scanner(System.in);
+			
+			nickname = sc.nextLine();
+			//여기 소켓이 서버랑 연결된 거니까 여기서 pw하면 서버로 간다. => 그래서 서버에서 br로 받을수있다.
+			pw.println(nickname);
+			pw.flush();
+			
+			//상대방한테 채팅 받아오는 스레드
+			new ClientThread(socket, nickname).start();
+			
+			//내가 상대방한테 보내는 반복문
 			while(true) {
-				System.out.println(">");
 				String line = scan.nextLine();
 				
-				if("exit".equals(line)) {
+				if("quit".equals(line)) {
+					//line = "< " + nickname + "님이 퇴장하였습니다. >";
+					pw.println("quit");
+					pw.flush();
 					break;
 				}
-				pw.println(line);
+				//서버로 보낸 채팅
+				pw.println(nickname + ":" + line);
 				//플러시를 해야 버퍼로 들어온 pw가 다시 나감
 				pw.flush();
 			}
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("error: " + e);
 		}
-		
 		
 	}
 }
